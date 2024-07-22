@@ -40,7 +40,7 @@ ENV DD_VERSION=1
 
 # Run the web service on container startup.
 # Change the entrypoint to include Datadog
-ENTRYPOINT ["/app/datadog-init"]
-CMD ["/dd_tracer/python/bin/ddtrace-run", "gunicorn", "--bind", ":$PORT", "--workers", "1", "--threads", "8", "--timeout", "0", "main:app"]
+
+CMD ["/app/datadog-init", "/dd_tracer/python/bin/ddtrace-run", "python", "main.py"]
 
 # [END cloudrun_helloworld_dockerfile]
