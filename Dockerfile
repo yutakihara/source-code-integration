@@ -29,11 +29,18 @@ COPY . ./
 # Install production dependencies.
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Run the web service on container startup. Here we use the gunicorn
-# webserver, with one worker process and 8 threads.
-# For environments with multiple CPU cores, increase the number of workers
-# to be equal to the cores available.
-# Timeout is set to 0 to disable the timeouts of the workers to allow Cloud Run to handle instance scaling.
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 main:app
+# Add Datadog integration
+COPY --from=datadog/serverless-init:1 /datadog-init /app/datadog-init
+RUN pip install --target /dd_tracer/python/ ddtrace
+
+# Set Datadog environment variables
+ENV DD_SERVICE=datadog-demo-run-python-on-cloud-run
+ENV DD_ENV=PROD
+ENV DD_VERSION=1
+
+# Run the web service on container startup.
+# Change the entrypoint to include Datadog
+ENTRYPOINT ["/app/datadog-init"]
+CMD ["/dd_tracer/python/bin/ddtrace-run", "gunicorn", "--bind", ":$PORT", "--workers", "1", "--threads", "8", "--timeout", "0", "main:app"]
 
 # [END cloudrun_helloworld_dockerfile]
