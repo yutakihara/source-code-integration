@@ -28,7 +28,7 @@ from flask import Flask
 
 app = Flask(__name__)
 
-
+@tracer.wrap()
 @app.route("/")
 def hello_world():
     """Example Hello World route."""
