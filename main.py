@@ -37,8 +37,13 @@ def hello_world():
     log.info('Hello, World! from Azure App Service.')
     return f"Hello {name}!"
 
+@app.route("/datadog")
+def datadog():
+    name = os.environ.get("NAME", "World")
+    log.error('DATADOG DATADOG DATADOG')
+    return f"Datadog {name}!"
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
     log.info('End of Main Function HERE!!!!!!!!!!!!!!!!!!!!!!!!')
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 # [END cloudrun_helloworld_service]
